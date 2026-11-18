@@ -34,20 +34,20 @@ jobs:
             target: aarch64-pc-windows-msvc
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           ref: ${{ inputs.ref || github.sha }}
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
           cache: ${{ !inputs.release && 'npm' || '' }}
       # Review and regenerate the bundled standard-library notices when changing Rust.
-      - uses: dtolnay/rust-toolchain@1.99.0
+      - uses: dtolnay/rust-toolchain@92e73e19cbfb3981e63ef478a16f95f415e634d3 # 1.99.0
         with:
           components: rustfmt, clippy
       - name: Check the reviewed Rust compiler
         run: node -e "require('node:assert/strict').equal(require('node:child_process').execFileSync('rustc', ['--version'], {encoding:'utf8'}).split(' ')[1], '1.99.0')"
-      - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         if: ${{ !inputs.release }}
       - run: npm ci
       - run: npm run build
@@ -59,7 +59,7 @@ jobs:
       - run: npm run test:upstream
       - run: npm run test:types
       - run: npm run test:package
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: native-${{ matrix.target }}
           path: '*.node'
@@ -81,21 +81,21 @@ jobs:
     # the binary filename. check-native verifies ELF symbol-version requirements.
     container: ${{ matrix.image }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           ref: ${{ inputs.ref || github.sha }}
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
           cache: ${{ !inputs.release && 'npm' || '' }}
-      - uses: dtolnay/rust-toolchain@1.99.0
+      - uses: dtolnay/rust-toolchain@92e73e19cbfb3981e63ef478a16f95f415e634d3 # 1.99.0
         with:
           components: rustfmt, clippy
       - name: Check the reviewed Rust compiler and libc baseline
         run: |
           node -e "require('node:assert/strict').equal(require('node:child_process').execFileSync('rustc', ['--version'], {encoding:'utf8'}).split(' ')[1], '1.99.0')"
           getconf GNU_LIBC_VERSION | grep -x 'glibc 2.28'
-      - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         if: ${{ !inputs.release }}
       - run: npm ci
       - run: npm run build
@@ -108,7 +108,7 @@ jobs:
       - run: npm run test:upstream
       - run: npm run test:types
       - run: npm run test:package
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: native-${{ matrix.target }}
           path: '*.node'
@@ -125,7 +125,7 @@ jobs:
             arch: arm64
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Build and test on Alpine
@@ -146,7 +146,7 @@ jobs:
             npm run test:types
             npm run test:package
           '
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: native-linux-${{ matrix.arch }}-musl
           path: '*.node'
@@ -156,15 +156,15 @@ jobs:
     needs: [native, gnu, musl]
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           ref: ${{ inputs.ref || github.sha }}
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
           cache: ${{ !inputs.release && 'npm' || '' }}
       - run: npm ci
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           pattern: native-*
           merge-multiple: true
@@ -179,7 +179,7 @@ jobs:
           SOURCE_COMMIT: ${{ inputs.ref || github.sha }}
       - name: Test the exact release tarball
         run: npm run test:package -- release
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: npm-package
           path: release/*
@@ -192,14 +192,14 @@ jobs:
       matrix:
         node: ['20.19.0', '24']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           ref: ${{ inputs.ref || github.sha }}
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: ${{ matrix.node }}
           cache: ${{ !inputs.release && 'npm' || '' }}
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: native-x86_64-unknown-linux-gnu
       - run: npm ci
@@ -211,14 +211,14 @@ jobs:
     needs: gnu
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           ref: ${{ inputs.ref || github.sha }}
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '24'
           cache: ${{ !inputs.release && 'npm' || '' }}
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: native-x86_64-unknown-linux-gnu
       - run: npm ci
